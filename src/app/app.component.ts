@@ -10,13 +10,12 @@ export class AppComponent implements OnInit {
   title = 'bolton-test';
 
   ably = new Ably.Realtime('ZoVHGw.4kc1eQ:xNiIHH2-oeOYIOwG');
-  channelName = '[product:ably-tfl/tube]tube:northern:940GZZLUEUS:arrivals';
+  channelName = '[product:ably-tfl/tube]tube:disruptions';
   channel = this.ably.channels.get(this.channelName);
 
   ngOnInit(): void {
     this.channel.subscribe((msg) => {
       /* station update in msg */
-      console.log(msg);
       console.log(msg.data);
     });
   }
