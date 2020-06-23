@@ -66,7 +66,7 @@ export class StationFilterComponent implements OnInit, OnDestroy {
 
   onChangeStationLine(event) {
     this.store.dispatch(new StationActions.SelectStationLine(event.value));
-    this.stationLineChanged.emit({});
+    this.stationLineChanged.emit();
   }
 
   ngOnDestroy() {

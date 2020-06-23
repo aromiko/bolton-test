@@ -48,22 +48,24 @@ export class StationComponent implements OnInit, OnDestroy {
         this.selectedStationLine = stateData.selectedStationLine;
       });
 
-    console.log(this.selectedStation);
-    console.log(this.selectedStationId);
-    this.stationSubscribe(this.selectedStationLine, this.selectedStationId);
+    this.subscribeToChannel(
+      this.selectedStationLine,
+      this.selectedStationId,
+      this.channel
+    );
   }
 
-  subscribeToChannel(stationLine, stationId, channel, stationSubscribe) {
+  subscribeToChannel(stationLine, stationId, channel) {
     if (channel) {
       channel.detach((err) => {
         if (err) {
           console.log('Error detaching: ' + err);
         } else {
-          stationSubscribe(stationLine, stationId);
+          this.stationSubscribe(stationLine, stationId);
         }
       });
     } else {
-      stationSubscribe(stationLine, stationId);
+      this.stationSubscribe(stationLine, stationId);
     }
   }
 
@@ -79,7 +81,6 @@ export class StationComponent implements OnInit, OnDestroy {
 
     this.stationHistory();
     this.channelSubscription = this.channel.subscribe((liveData) => {
-      console.log(liveData);
       this.store.dispatch(new StationActions.SetStationData(liveData.data));
     });
   }
@@ -107,12 +108,17 @@ export class StationComponent implements OnInit, OnDestroy {
     this.subscribeToChannel(
       this.selectedStationLine,
       this.selectedStationId,
-      this.channel,
-      this.stationSubscribe
+      this.channel
     );
   }
+
   onStationLineChange(event) {
     console.log('station line changed');
+    this.subscribeToChannel(
+      this.selectedStationLine,
+      this.selectedStationId,
+      this.channel
+    );
   }
 
   ngOnDestroy() {
