@@ -1,8 +1,8 @@
 <div class="container">
-  <app-station-filter></app-station-filter>
+  <app-station-filter (stationChanged)="onStationChange($event)" (stationLineChanged)="onStationLineChange($event)">
+  </app-station-filter>
   <app-station-table></app-station-table>
   <div>{{ (station | async).selectedStation }}</div>
   <div>{{ (station | async).selectedStationId }}</div>
-  <div *ngIf="data == []">London Train is closed Right now.</div>
-  <div>{{ (station | async).stationData }}</div>
+  <div>{{ (station | async).selectedStationLine }}</div>
 </div>

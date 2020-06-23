@@ -1,22 +1,37 @@
+import * as ActionTypes from './station.types';
 import * as StationActions from './station.actions';
 
-const initialState = {
-  selectedStation: 'Euston Underground Station',
-  selectedStationId: '940GZZLUEUS',
+export interface State {
+  selectedStation: string;
+  selectedStationId: string;
+  selectedStationLine: string;
+  stationData: object[];
+}
+
+export interface AppState {
+  station: State;
+}
+
+const initialState: State = {
+  selectedStation: '',
+  selectedStationId: '',
+  selectedStationLine: '',
   stationData: [],
 };
 
 export function stationReducer(
-  state = initialState,
+  state: State = initialState,
   action: StationActions.StationAllActions
 ) {
   switch (action.type) {
-    case StationActions.SELECT_STATION:
+    case ActionTypes.SELECT_STATION:
       return { ...state, selectedStation: action.payload };
-    case StationActions.SELECT_STATION_ID:
+    case ActionTypes.SELECT_STATION_ID:
       return { ...state, selectedStationId: action.payload };
-    case StationActions.SET_STATION_DATA:
+    case ActionTypes.SET_STATION_DATA:
       return { ...state, stationData: action.payload };
+    case ActionTypes.SELECT_STATION_LINE:
+      return { ...state, selectedStationLine: action.payload };
     default:
       return state;
   }

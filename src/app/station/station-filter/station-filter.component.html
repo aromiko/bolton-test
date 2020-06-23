@@ -1,9 +1,18 @@
 <h2>Filters</h2>
 <mat-form-field>
-  <mat-label>Station</mat-label>
-  <mat-select (selectionChange)="onChangeStation($event)" [value]="(station | async).selectedStation">
+  <mat-label>Station Name</mat-label>
+  <mat-select (selectionChange)="onChangeStation($event)" [value]="selectedStation">
     <mat-option *ngFor="let station of stations" [value]="station.stationName">
       {{station.stationName}}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<mat-form-field>
+  <mat-label>Station Line</mat-label>
+  <mat-select (selectionChange)="onChangeStationLine($event)" [value]="selectedStationLine">
+    <mat-option *ngFor="let stationLine of stationLineList" [value]="stationLine">
+      {{stationLine}}
     </mat-option>
   </mat-select>
 </mat-form-field>

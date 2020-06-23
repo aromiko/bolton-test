@@ -1,8 +1,15 @@
 import * as StationActions from '../store/station.actions';
+import * as fromStation from '../store/station.reducer';
 
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
+import { Observable, Subscription } from 'rxjs';
 
-import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import stationData from '../../../assets/stationData.json';
 
@@ -11,18 +18,28 @@ import stationData from '../../../assets/stationData.json';
   templateUrl: './station-filter.component.html',
   styleUrls: ['./station-filter.component.css'],
 })
-export class StationFilterComponent implements OnInit {
-  station: Observable<{ selectedStation: string; selectedStationId: string }>;
+export class StationFilterComponent implements OnInit, OnDestroy {
+  subscription: Subscription;
+  station: Observable<fromStation.State>;
   stations = stationData;
-  stationLine = stationData[0].stationLine;
-  constructor(
-    private store: Store<{
-      station: { selectedStation: string; selectedStationId: string };
-    }>
-  ) {}
+  selectedStation: string;
+  selectedStationLine: string;
+  stationLineList = [];
+
+  @Output() stationChanged = new EventEmitter();
+  @Output() stationLineChanged = new EventEmitter();
+
+  constructor(private store: Store<fromStation.AppState>) {}
 
   ngOnInit(): void {
     this.station = this.store.select('station');
+    this.subscription = this.store.select('station').subscribe((stateData) => {
+      this.selectedStation = stateData.selectedStation;
+      this.selectedStationLine = stateData.selectedStationLine;
+    });
+    this.stationLineList = this.stations[
+      this.stations.map((e) => e.stationName).indexOf(this.selectedStation)
+    ].stationLine;
   }
 
   onChangeStation(event) {
@@ -34,5 +51,25 @@ export class StationFilterComponent implements OnInit {
         ].stationId
       )
     );
+    this.store.dispatch(
+      new StationActions.SelectStationLine(
+        this.stations[
+          this.stations.map((e) => e.stationName).indexOf(event.value)
+        ].stationLine[0]
+      )
+    );
+    this.stationLineList = this.stations[
+      this.stations.map((e) => e.stationName).indexOf(this.selectedStation)
+    ].stationLine;
+    this.stationChanged.emit();
+  }
+
+  onChangeStationLine(event) {
+    this.store.dispatch(new StationActions.SelectStationLine(event.value));
+    this.stationLineChanged.emit({});
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 }

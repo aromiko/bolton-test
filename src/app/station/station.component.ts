@@ -1,9 +1,11 @@
 import * as StationActions from './store/station.actions';
+import * as fromStation from './store/station.reducer';
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Observable, Subscription } from 'rxjs';
 
-import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
+import stationData from '../../assets/stationData.json';
 
 declare var Ably: any;
 @Component({
@@ -11,47 +13,59 @@ declare var Ably: any;
   templateUrl: './station.component.html',
   styleUrls: ['./station.component.css'],
 })
-export class StationComponent implements OnInit {
+export class StationComponent implements OnInit, OnDestroy {
+  channelSubscription: Subscription;
+  stationSubscription: Subscription;
   data = [];
-  station: Observable<{
-    selectedStation: string;
-    selectedStationId: string;
-    stationData: object[];
-  }>;
+  station: Observable<fromStation.State>;
+  selectedStation: string;
+  selectedStationId: string;
+  selectedStationLine: string;
+  stations = stationData;
 
   ably: any;
   channelName: string;
   channel: any;
 
-  constructor(
-    private store: Store<{
-      station: {
-        selectedStation: string;
-        selectedStationId: string;
-        stationData: object[];
-      };
-    }>
-  ) {}
+  constructor(private store: Store<fromStation.AppState>) {}
 
   ngOnInit(): void {
     this.station = this.store.select('station');
+    this.store.dispatch(
+      new StationActions.SelectStation(this.stations[0].stationName)
+    );
+    this.store.dispatch(
+      new StationActions.SelectStationId(this.stations[0].stationId)
+    );
+    this.store.dispatch(
+      new StationActions.SelectStationLine(this.stations[0].stationLine[0])
+    );
+    this.stationSubscription = this.store
+      .select('station')
+      .subscribe((stateData) => {
+        this.selectedStation = stateData.selectedStation;
+        this.selectedStationId = stateData.selectedStationId;
+        this.selectedStationLine = stateData.selectedStationLine;
+      });
 
-    this.stationSubscribe('metropolitan', '940GZZLUBST');
+    console.log(this.selectedStation);
+    console.log(this.selectedStationId);
+    this.stationSubscribe(this.selectedStationLine, this.selectedStationId);
   }
 
-  // subscribeToChannel(stationLine, stationId, channel, stationSubscribe) {
-  //   if (channel) {
-  //     channel.detach((err) => {
-  //       if (err) {
-  //         console.log('Error detaching: ' + err);
-  //       } else {
-  //         stationSubscribe(stationLine, stationId);
-  //       }
-  //     });
-  //   } else {
-  //     stationSubscribe(stationLine, stationId);
-  //   }
-  // }
+  subscribeToChannel(stationLine, stationId, channel, stationSubscribe) {
+    if (channel) {
+      channel.detach((err) => {
+        if (err) {
+          console.log('Error detaching: ' + err);
+        } else {
+          stationSubscribe(stationLine, stationId);
+        }
+      });
+    } else {
+      stationSubscribe(stationLine, stationId);
+    }
+  }
 
   stationSubscribe(stationLine, stationId) {
     this.ably = new Ably.Realtime('ZoVHGw.4kc1eQ:xNiIHH2-oeOYIOwG');
@@ -64,7 +78,7 @@ export class StationComponent implements OnInit {
     this.channel = this.ably.channels.get(this.channelName);
 
     this.stationHistory();
-    this.channel.subscribe((liveData) => {
+    this.channelSubscription = this.channel.subscribe((liveData) => {
       console.log(liveData);
       this.store.dispatch(new StationActions.SetStationData(liveData.data));
     });
@@ -86,5 +100,22 @@ export class StationComponent implements OnInit {
         }
       );
     });
+  }
+
+  onStationChange(event) {
+    console.log('station changed');
+    this.subscribeToChannel(
+      this.selectedStationLine,
+      this.selectedStationId,
+      this.channel,
+      this.stationSubscribe
+    );
+  }
+  onStationLineChange(event) {
+    console.log('station line changed');
+  }
+
+  ngOnDestroy() {
+    this.channelSubscription.unsubscribe();
   }
 }
