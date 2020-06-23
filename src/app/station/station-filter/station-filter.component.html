@@ -1,1 +1,9 @@
-<p>station-filter works!</p>
+<h2>Filters</h2>
+<mat-form-field>
+  <mat-label>Station</mat-label>
+  <mat-select (selectionChange)="onChangeStation($event)" [value]="(station | async).selectedStation">
+    <mat-option *ngFor="let station of stations" [value]="station.stationName">
+      {{station.stationName}}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
