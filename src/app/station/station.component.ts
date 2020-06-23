@@ -81,6 +81,7 @@ export class StationComponent implements OnInit, OnDestroy {
 
     this.stationHistory();
     this.channelSubscription = this.channel.subscribe((liveData) => {
+      console.log('New Data from live: ' + liveData.data);
       this.store.dispatch(new StationActions.SetStationData(liveData.data));
     });
   }
@@ -104,7 +105,6 @@ export class StationComponent implements OnInit, OnDestroy {
   }
 
   onStationChange(event) {
-    console.log('station changed');
     this.subscribeToChannel(
       this.selectedStationLine,
       this.selectedStationId,
@@ -113,7 +113,6 @@ export class StationComponent implements OnInit, OnDestroy {
   }
 
   onStationLineChange(event) {
-    console.log('station line changed');
     this.subscribeToChannel(
       this.selectedStationLine,
       this.selectedStationId,

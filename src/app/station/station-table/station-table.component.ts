@@ -1,8 +1,8 @@
-import * as StationActions from '../store/station.actions';
 import * as fromStation from '../store/station.reducer';
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
+import { MatTableDataSource } from '@angular/material/table';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 
@@ -13,17 +13,28 @@ import { Subscription } from 'rxjs';
 })
 export class StationTableComponent implements OnInit, OnDestroy {
   subscription: Subscription;
+  displayedColumns: string[] = [
+    'due',
+    'id',
+    'stationName',
+    'platformName',
+    'destination',
+    'currentLocation',
+    'line',
+  ];
+  dataSource = new MatTableDataSource();
 
   constructor(private store: Store<fromStation.AppState>) {}
 
-  tableData = [];
-
   ngOnInit(): void {
     this.subscription = this.store.select('station').subscribe((stateData) => {
-      if (stateData.stationData) {
-        this.tableData = stateData.stationData;
-      }
+      this.dataSource = new MatTableDataSource(stateData.stationData);
     });
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   ngOnDestroy(): void {

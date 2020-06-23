@@ -1,1 +1,48 @@
-<div>{{tableData}}</div>
+<div style="padding-top: 2rem;">
+  <mat-form-field style="width: 100%;">
+    <mat-label>Filter</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. northbound">
+  </mat-form-field>
+
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" style="width: 100%;" *ngIf="dataSource">
+
+    <ng-container matColumnDef="due">
+      <th mat-header-cell *matHeaderCellDef> Due </th>
+      <td mat-cell *matCellDef="let element"> {{element.ExpectedArrival}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef> Vehicle ID </th>
+      <td mat-cell *matCellDef="let element"> {{element.VehicleId}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="stationName">
+      <th mat-header-cell *matHeaderCellDef> Station Name </th>
+      <td mat-cell *matCellDef="let element"> {{element.StationName}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="platformName">
+      <th mat-header-cell *matHeaderCellDef> Platform Name </th>
+      <td mat-cell *matCellDef="let element"> {{element.PlatformName}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="destination">
+      <th mat-header-cell *matHeaderCellDef> Destination </th>
+      <td mat-cell *matCellDef="let element"> {{element.Towards}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="currentLocation">
+      <th mat-header-cell *matHeaderCellDef> Current Location </th>
+      <td mat-cell *matCellDef="let element"> {{element.CurrentLocation}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="line">
+      <th mat-header-cell *matHeaderCellDef> Line </th>
+      <td mat-cell *matCellDef="let element"> {{element.LineName}} </td>
+    </ng-container>
+
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>
