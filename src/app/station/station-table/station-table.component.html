@@ -8,7 +8,7 @@
 
     <ng-container matColumnDef="due">
       <th mat-header-cell *matHeaderCellDef> Due </th>
-      <td mat-cell *matCellDef="let element"> {{element.ExpectedArrival}} </td>
+      <td mat-cell *matCellDef="let element"> {{element.ExpectedArrival | date:"hh:mm:ss a - dd MMMM yyyy"}} </td>
     </ng-container>
 
     <ng-container matColumnDef="id">
