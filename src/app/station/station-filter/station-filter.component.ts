@@ -11,7 +11,7 @@ import {
 import { Observable, Subscription } from 'rxjs';
 
 import { Store } from '@ngrx/store';
-import stationData from '../../../assets/stationData.json';
+import { stationData } from '../stationData.model'
 
 @Component({
   selector: 'app-station-filter',
@@ -29,7 +29,7 @@ export class StationFilterComponent implements OnInit, OnDestroy {
   @Output() stationChanged = new EventEmitter();
   @Output() stationLineChanged = new EventEmitter();
 
-  constructor(private store: Store<fromStation.AppState>) {}
+  constructor(private store: Store<fromStation.AppState>) { }
 
   ngOnInit(): void {
     this.station = this.store.select('station');

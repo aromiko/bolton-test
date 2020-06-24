@@ -5,7 +5,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
-import stationData from '../../assets/stationData.json';
+import { stationData } from './stationData.model';
 
 declare var Ably: any;
 @Component({
