@@ -2,9 +2,9 @@ import * as StationActions from './store/station.actions';
 import * as fromStation from './store/station.reducer';
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
 
 import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import stationData from '../../assets/stationData.json';
 
 declare var Ably: any;
@@ -16,8 +16,6 @@ declare var Ably: any;
 export class StationComponent implements OnInit, OnDestroy {
   channelSubscription: Subscription;
   stationSubscription: Subscription;
-  data = [];
-  station: Observable<fromStation.State>;
   selectedStation: string;
   selectedStationId: string;
   selectedStationLine: string;
@@ -27,10 +25,9 @@ export class StationComponent implements OnInit, OnDestroy {
   channelName: string;
   channel: any;
 
-  constructor(private store: Store<fromStation.AppState>) {}
+  constructor(private store: Store<fromStation.AppState>) { }
 
   ngOnInit(): void {
-    this.station = this.store.select('station');
     this.store.dispatch(
       new StationActions.SelectStation(this.stations[0].stationName)
     );
@@ -121,6 +118,7 @@ export class StationComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.stationSubscription.unsubscribe();
     this.channelSubscription.unsubscribe();
   }
 }
